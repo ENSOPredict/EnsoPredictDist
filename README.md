@@ -94,7 +94,7 @@ ix. The powershell will show that jupyter notebook is running. Copy the link tha
 <img src="jupyter.jpg"/>
 
 
-x. Open/click nino34index_ml_prediction.ipynb file, input parameters as instructed and run predictions.
+x. In Jupyter notebook browser, open or click nino34index_ml_prediction.ipynb file. Input parameters according to instruction in page and run predictions.
 
 
 xi. Quit jupyter notebook when finished by clicking Quit button at top right corner of jupyter tree browser.
