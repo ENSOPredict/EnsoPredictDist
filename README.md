@@ -1,6 +1,32 @@
 # EnsoPredict
+
 ## Description
-put description here
+
+put project description here
+
+
+
+
+### Files:
+
+- nino34index_ml_prediction.ipynb = Main notebook file to be open in jupyter notebook to run prediction
+
+- nino34index_ml_prediction.py = Script to do prediction and visualize graph, called by - nino34index_ml_prediction.ipynb
+
+- requirements.txt = Docker environment dependencies
+
+
+
+
+### Folder: 
+
+mount = folder to be mounted to docker
+
+--data = child folder of mount to keep raw data
+
+--model = child folder of mount to keep models with different lead times
+
+
 
 
 ## Run Project using Docker
