@@ -117,7 +117,7 @@ docker stop nostalgic_nash
 n. Input or output files can still be accessible inside local "mount" folder even after docker container has been stopped.
 
 
-MISC:
+### MISC:
 
 a. To stop all running docker container, run:
 
