@@ -19,9 +19,17 @@ git clone https://github.com/ENSOPredict-Team2/EnsoPredictDist.git
 
 Outside of powershell consoles, open file explorer and get into EnsoPredictDist\mount folder (according to each local machine path). Notice there are two folders inside it named "data" and "model" folder. This folder will hold the data and model files which can be downloaded from:
 
-- Download files into "data" folder from: https://doi.org/10.6084/m9.figshare.13227473.v1 and http://portal.nersc.gov/project/dasrepo/AGU_ML_Tutorial/sst.mon.mean.trefadj.anom.1880to2018.nc
+- Download all files below into "data" folder from: 
 
-- Download files into "model" folder from: https://doi.org/10.6084/m9.figshare.13227608.v1 https://doi.org/10.6084/m9.figshare.13227599.v1 
+Nino 3.4 Index: https://doi.org/10.6084/m9.figshare.13227473.v1
+
+Sea Surface Temperatur: http://portal.nersc.gov/project/dasrepo/AGU_ML_Tutorial/sst.mon.mean.trefadj.anom.1880to2018.nc
+
+- Download files below into "model" folder from: 
+
+Lead Time 3 model: https://doi.org/10.6084/m9.figshare.13227608.v1 
+
+Lead Time 4 model: https://doi.org/10.6084/m9.figshare.13227599.v1 
 
 
 
