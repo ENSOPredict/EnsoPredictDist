@@ -11,7 +11,7 @@ put project description here
 
 - nino34index_ml_prediction.ipynb = Main notebook file to be open in jupyter notebook to run prediction
 
-- nino34index_ml_prediction.py = Script to do prediction and visualize graph, called by nino34index_ml_prediction.ipynb
+- nino34index_ml_prediction.py = Script called by nino34index_ml_prediction.ipynb to do prediction and visualization
 
 - requirements.txt = Docker environment dependencies
 
