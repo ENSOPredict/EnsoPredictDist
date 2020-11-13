@@ -54,10 +54,17 @@ Sea Surface Temperatur: http://portal.nersc.gov/project/dasrepo/AGU_ML_Tutorial/
 
 - Download files below into "model" folder from: 
 
+Lead Time 1 model: https://doi.org/10.6084/m9.figshare.13232771.v1
+
+Lead Time 2 model: https://doi.org/10.6084/m9.figshare.13232783.v1
+
 Lead Time 3 model: https://doi.org/10.6084/m9.figshare.13227608.v1 
 
 Lead Time 4 model: https://doi.org/10.6084/m9.figshare.13227599.v1 
 
+Lead Time 5 model: https://doi.org/10.6084/m9.figshare.13232789.v1
+
+Lead Time 6 model: https://doi.org/10.6084/m9.figshare.13232795.v1
 
 
 d. Back to powershell console, go into EnsoPredictDist folder:
