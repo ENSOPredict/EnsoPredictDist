@@ -2,7 +2,11 @@
 
 ## Description
 
-put project description here
+El Nino Southern Oscillation is a kind of climate phenomenon, which contains three states: El Nino, La Nina, and Neutral, and it requires certain changes in both the ocean and the atmosphere. El Nino indicates a warming ocean surface, while La Nina indicates a cooling ocean surface. To be specific, A cycle of ENSO is usually as long as 2-7 years, and would cause serious climate damage to some areas.
+
+Former physical model uses the climate data and physical equations to describe laws of physics. Latitude and horizontal data is required to form a complete feature for ENSO detection, making the whole system computationally expensive.
+
+In this project, we will develop regression and classification model to predict ONI, a rolling 3-month average of sea surface temperatures in the Nino 3.4 Region. We will also try CNN model to predict a similar result.
 
 
 
