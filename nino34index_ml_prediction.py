@@ -285,101 +285,218 @@ def train_network(net, testloader, experiment_name):
   return predictions #, train_losses, test_losses
 
 # option user can select
-lead_time = int(sys.argv[1])
-test_start_date = sys.argv[2]
-test_end_date = sys.argv[3]
-
-#Assemble numpy arrays corresponding to predictors and predictands
-train_start_date = '1860-01-01'
-train_end_date = '2200-12-31'
-num_input_time_steps = 2
-
-# climate_model = 'MPI'
-
-
-# train_predictors, train_predictands = assemble_predictors_predictands(train_start_date,
-#                       train_end_date, lead_time, climate_model, 'spatial', num_input_time_steps=num_input_time_steps)
-test_predictors, test_predictands = assemble_predictors_predictands(test_start_date,
-                    test_end_date, lead_time, 'observations', 'spatial', num_input_time_steps=num_input_time_steps)
-
-#Convert the numpy ararys into ENSODataset, which is a subset of the
-#torch.utils.data.Dataset class.  This class is compatible with
-#the torch dataloader, which allows for data loading for a CNN
-# train_dataset = ENSODataset(train_predictors, train_predictands)
-test_dataset = ENSODataset(test_predictors, test_predictands)
-
-#Create a torch.utils.data.DataLoader from the ENSODatasets() created earlier!
-#the similarity between the name DataLoader and Dataset in the pytorch API is unfortunate...
-# trainloader = DataLoader(train_dataset, batch_size=10)
-testloader = DataLoader(test_dataset, batch_size=10)
-net = CNN(num_input_time_steps=num_input_time_steps)
-# optimizer = optim.Adam(net.parameters(), lr=0.0001)
-
-experiment_name = "twolayerCNN_MPI_{}_{}_lead_time{}".format(train_start_date, train_end_date, str(lead_time))
-predictions = train_network(net, testloader, experiment_name)
-
-
-corr, _ = pearsonr(test_predictands, predictions)
-rmse = mean_squared_error(test_predictands, predictions) ** 0.5
-# plot_nino_time_series(test_predictands, predictions, '{} Predictions. Corr: {:3f}. RMSE: {:3f}.'.format(experiment_name,
-#                                                                       corr, rmse))
-
-predictions = pd.Series(predictions, index=test_predictands.index)
-predictions = predictions.sort_index()
-y = test_predictands.sort_index()
-
-result = pd.DataFrame(y, columns=["true"])
-result['pred']=predictions
-title = '{} Predictions. Corr: {:3f}. RMSE: {:3f}.'.format(experiment_name,corr, rmse)
+lead_range = int(sys.argv[1])
+interest_year = sys.argv[2] # from 2011 to 2018
+interest_month = int(sys.argv[3])  #  User can select from '2011-01-01' (2011 January) to '2018-12-31'Actually end date:sst
+input_data = sys.argv[4]  # 'observations' or 'observations2'
+#### user input ###########
 
 import plotly.graph_objects as go
 
-fig = go.Figure()
-fig.add_trace(go.Scatter(x=result.index, y=result.true,
-                    mode='lines',
-                    name='Ground Truth'))
-fig.add_trace(go.Scatter(x=result.index, y=result.pred,
-                    mode='lines',
-                    name='Prediction'))
+# user input check
+lead_time_check = [i for i in range(1,13)]
+year_check = ['2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018']
+input_data_check = ['observations', 'observations2']
 
-fig.add_shape(type="line",
-    x0=result.index[0], y0=1.5, x1=result.index[-1], y1=1.5,
-    line=dict(
-        color="LightSeaGreen",
-        width=3,
-        dash="dashdot",
-    )
-)
+if lead_range not in lead_time_check:
+    print("Please enter an integer number from 1 to 12 for lead time.")
+elif interest_year not in year_check:
+    print("Please enter one year from 2011 to 2018 for your interest year.")  
+    
+elif interest_month not in lead_time_check:
+    print("Please enter a month from 1 to 12 for your interest month.")
+    
+elif input_data not in input_data_check:
+    print("Please enter 'observations' or 'observations2' for input data.")
 
-fig.add_shape(type="line",
-    x0=result.index[0], y0=-1.5, x1=result.index[-1], y1=-1.5,
-    line=dict(
-        color="MediumPurple",
-        width=3,
-        dash="dashdot",
-    )
-)
+else: 
+  interest_month = '0'+str(interest_month)
+
+  if interest_month in [1,3,5,7,8,10,12]:
+      day = str(31)
+  elif interest_month == '02':
+      
+      if interest_year in ['2012', '2016']:
+          day = str(29)
+      else:
+          day = str(28)
+  else:
+      day = str(30)
+      
+  test_end_date = interest_year+'-'+interest_month[-2:]+'-'+day 
 
 
-fig.update_yaxes(title_text="nino 3.4 index")
-fig.update_layout(
-  width = 1000, title = title
-)
-fig.update_layout(hovermode="x unified")
+  #Assemble numpy arrays corresponding to predictors and predictands
+  train_start_date = '1860-01-01'
+  train_end_date = '2200-12-31'
+  num_input_time_steps = 2
 
-fig.update_xaxes(
-    rangeslider_visible=True,
-    rangeselector=dict(
-        buttons=list([
-            dict(count=1, label="1y", step="year", stepmode="backward"),
-            dict(count=2, label="2y", step="year", stepmode="backward"),
-            dict(count=3, label="3y", step="year", stepmode="backward"),
-            dict(count=4, label="4y", step="year", stepmode="backward"),
-            dict(count=5, label="5y", step="year", stepmode="backward"),
-            dict(count=6, label="6y", step="year", stepmode="backward"),
-            dict(step="all")
-        ])
-    )
-)
+  predict_start_date = '2011-01-01'
+  test_start_date = ['2010-11-01', '2010-10-01', '2010-09-01', '2010-08-01', '2010-07-01', '2010-06-01', \
+                    '2010-05-01', '2010-04-01', '2010-03-01', '2010-02-01', '2010-01-01', '2009-12-31']
 
-fig.show()
+  lead_time_list = [i for i in range(1, lead_range +1)]
+
+  """update batch_size"""
+  batch_size = [64,10,10,64,10,10,10,10,10,10,10,10]
+
+  # climate_model = 'MPI'
+
+  result_dic = dict()
+  corr_dic = dict()
+  keys = list()
+
+  for lead_time in lead_time_list:
+
+    test_predictors0, test_predictands0 = assemble_predictors_predictands(test_start_date[lead_time-1],
+                        test_end_date, lead_time, 'observations', 'spatial', num_input_time_steps=num_input_time_steps)
+
+    test_predictors1, test_predictands1 = assemble_predictors_predictands(test_start_date[lead_time-1],
+                        test_end_date, lead_time, 'observations2', 'spatial', num_input_time_steps=num_input_time_steps)
+
+    if input_data == 'observations':
+      test_predictors, test_predictands = test_predictors0, test_predictands0
+    else:
+      test_predictors, test_predictands = test_predictors1, test_predictands0
+
+    test_dataset = ENSODataset(test_predictors, test_predictands)
+
+
+    testloader = DataLoader(test_dataset, batch_size=batch_size[lead_time-1])
+    net = CNN(num_input_time_steps=num_input_time_steps)
+
+
+    experiment_name = "twolayerCNN_MPI_{}_{}_lead_time{}".format(train_start_date, train_end_date, str(lead_time))
+    predictions = train_network(net, testloader, experiment_name)
+
+
+    corr, _ = pearsonr(test_predictands, predictions)
+    rmse = mean_squared_error(test_predictands, predictions) ** 0.5
+
+    # print(test_predictands)
+
+    predictions = pd.Series(predictions, index=test_predictands0.index)
+    predictions = predictions.sort_index()
+    y = test_predictands.sort_index()
+
+    result = pd.DataFrame(y, columns=["ground_truth"])
+    column_name = 'lead time'+str(lead_time)
+    result[column_name] = predictions
+
+    # print(result)
+
+
+    key = "lead time"+str(lead_time)
+    keys.append(key)
+
+    corr_dic[key] = [corr, rmse]
+    result_dic[key] = result
+
+  title = "{}_prediction_{}_{}_lead time till {}".format(input_data, predict_start_date, test_end_date, str(lead_time))
+
+  df = result_dic[key]
+  for i in range(lead_range-1):
+    null_list = [None for j in range(lead_range-i-1) ]  
+    
+    column = 'lead time'+str(i+1)
+    df[column] = list(result_dic[keys[i]][column]) +null_list
+
+  for i in range(2, 13):
+    if i < 10:
+      date = '2019-0'+str(i)+'-01'
+    else:
+      date = '2019-'+str(i)+'-01'
+    if date in df.index:
+      df['ground_truth'][date] = None
+
+  sorted(df.columns[1:])
+  # Re-order Columns
+  df = df[list(df.columns[:1])+sorted(df.columns[1:])]
+
+  # 1. output csv file
+  # df.to_csv('{}.csv'.format(title))
+  df.to_csv('mount/output/{}.csv'.format(title))
+
+  # 2. output predictions table
+  date_list=test_end_date.split('-')
+  standard_date = date_list[0]+'-'+date_list[1]+'-'+'01'  # '2018-12-01'
+  # the first output display : prediction result
+  print(df.loc[standard_date:])
+
+  # the second output: correlation table
+  df_corr = pd.DataFrame(corr_dic).T
+  df_corr.columns = ["correlation", "rmse"]
+  print(df_corr)
+
+  fig = go.Figure()
+
+  fig.add_trace(go.Scatter(x=result.index, y=result.ground_truth,
+                      line=dict(color='navy', dash='dash'),
+                      name='ground truth'))
+
+  for column in result.columns:
+      if column.startswith('lead time'):
+            
+          fig.add_trace(go.Scatter(x=result.index, y=result[column],
+                          mode='lines', #line_color= "magenta",
+                          name=column))
+
+
+  fig.add_shape(type="line",
+      x0=result.index[0], y0=1.5, x1=result.index[-1], y1=1.5,
+      line=dict(
+          color= 'Red', #"LightSeaGreen",
+          width=2,
+          dash="dashdot",
+      )
+  )
+
+  fig.add_shape(type="line",
+      x0=result.index[0], y0=-1.5, x1=result.index[-1], y1=-1.5,
+      line=dict(
+          color= 'Red', #"MediumPurple",
+          width=2,
+          dash="dashdot",
+      )
+  )
+
+  fig.add_shape(
+          type="rect",
+          xref="x",
+          yref="paper",
+          x0=standard_date,
+          y0="0",
+          x1=result.index[-1],
+          y1="1",
+          fillcolor="gray",
+          opacity=0.4,
+          line_width=0,
+          layer="below"
+      ) 
+
+  fig.update_xaxes(
+      rangeslider_visible=True,
+      rangeselector=dict(
+          buttons=list([
+              dict(count=1, label="1y", step="year", stepmode="backward"),
+              dict(count=2, label="2y", step="year", stepmode="backward"),
+              dict(count=3, label="3y", step="year", stepmode="backward"),
+              dict(count=4, label="4y", step="year", stepmode="backward"),
+              dict(count=5, label="5y", step="year", stepmode="backward"),
+              dict(count=6, label="6y", step="year", stepmode="backward"),
+              dict(step="all")
+          ]), 
+          buttondefaults = dict(count=1, label="1y", step="year", stepmode="backward")
+      )
+  )
+
+  fig.update_yaxes(title_text="nino 3.4 index")
+  fig.update_layout(
+    width = 1000, title = title , 
+  )
+  fig.update_layout(hovermode="x unified")
+
+
+  # layout.template.layout.xaxis.rangeselector.buttondefaults
+
+  fig.show()
