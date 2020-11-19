@@ -412,6 +412,7 @@ else:
   sorted(df.columns[1:])
   # Re-order Columns
   df = df[list(df.columns[:1])+sorted(df.columns[1:])]
+  result = df
 
   # 1. output csv file
   # df.to_csv('{}.csv'.format(title))

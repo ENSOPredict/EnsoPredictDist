@@ -42,7 +42,7 @@ def load_enso_indices():
   # return enso_vals
 
 def assemble_predictors_predictands(start_date, end_date, lead_time,
-                                    dataset, input_data,
+                                    input_data, data_format,
                                     num_input_time_steps=1,
                                     use_pca=False, n_components=32,
                                     lat_slice=None, lon_slice=None):
@@ -403,10 +403,11 @@ else:
             date_list.append(make_date)   
 
     # predictions = pd.Series(predictions, index=test_predictands.index)
-    predictions = pd.Series(predictions, index=date_list)
-    predictions = predictions.sort_index()
+    date_list = pd.to_datetime(date_list)
+    # predictions = pd.Series(predictions, index=date_list)
+    # predictions = predictions.sort_index()
     y = test_predictands.sort_index()
-
+    y = pd.Series(test_predictands, index=date_list)
     result = pd.DataFrame(y, columns=["ground_truth"])
     column_name = 'lead time'+str(lead_time)
     result[column_name] = predictions
@@ -440,7 +441,7 @@ else:
   sorted(df.columns[1:])
   # Re-order Columns
   df = df[list(df.columns[:1])+sorted(df.columns[1:])]
-
+  result = df
   # 1. output csv file
   # df.to_csv('{}.csv'.format(title))
   df.to_csv('mount/output/{}.csv'.format(title))
