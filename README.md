@@ -30,6 +30,8 @@ mount = folder to be mounted to docker
 
 --model = child folder of mount to keep models with different lead times
 
+--output = child folder of mount to keep output file of predictions
+
 
 
 
@@ -54,7 +56,9 @@ c. Outside of powershell consoles, open file explorer and get into EnsoPredictDi
 
 Nino 3.4 Index: https://doi.org/10.6084/m9.figshare.13227473.v1
 
-Sea Surface Temperatur: http://portal.nersc.gov/project/dasrepo/AGU_ML_Tutorial/sst.mon.mean.trefadj.anom.1880to2018.nc
+Sea Surface Temperature: http://portal.nersc.gov/project/dasrepo/AGU_ML_Tutorial/sst.mon.mean.trefadj.anom.1880to2018.nc
+
+regridded_era_t2m_anomalies.nc: https://doi.org/10.6084/m9.figshare.13232795.v1
 
 - Download files below into "model" folder from: 
 
@@ -69,6 +73,18 @@ Lead Time 4 model: https://doi.org/10.6084/m9.figshare.13227599.v1
 Lead Time 5 model: https://doi.org/10.6084/m9.figshare.13232789.v1
 
 Lead Time 6 model: https://doi.org/10.6084/m9.figshare.13232795.v1
+
+Lead Time 7 model: https://doi.org/10.6084/m9.figshare.13232795.v1
+
+Lead Time 8 model: https://doi.org/10.6084/m9.figshare.13232795.v1
+
+Lead Time 9 model: https://doi.org/10.6084/m9.figshare.13232795.v1
+
+Lead Time 10 model: https://doi.org/10.6084/m9.figshare.13232795.v1
+
+Lead Time 11 model: https://doi.org/10.6084/m9.figshare.13232795.v1
+
+Lead Time 12 model: https://doi.org/10.6084/m9.figshare.13232795.v1
 
 
 d. Back to powershell console, go into EnsoPredictDist folder:
