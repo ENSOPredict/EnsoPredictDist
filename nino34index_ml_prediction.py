@@ -12,6 +12,8 @@ from torch.utils.data import Dataset, DataLoader
 from scipy.stats import pearsonr
 from sklearn.metrics import mean_squared_error
 import sys
+import matplotlib.pyplot as plt
+import sklearn
 
 #Scaffold code to load in data.  This code cell is mostly data wrangling
 
@@ -258,7 +260,7 @@ def train_network(net, testloader, experiment_name):
   best_loss = np.infty
 
 
-  net = torch.load('mount/model/{}.pt'.format(experiment_name))
+  net = torch.load('mount/model/{}.pt'.format(experiment_name), map_location=torch.device('cpu'))
   net.eval()
   net.to(device)
 
