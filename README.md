@@ -30,6 +30,8 @@ mount = folder to be mounted to docker
 
 --model = child folder of mount to keep models with different lead times
 
+--output = child folder of mount to keep output file of predictions
+
 
 
 
