@@ -58,7 +58,7 @@ Nino 3.4 Index: https://doi.org/10.6084/m9.figshare.13227473.v1
 
 Sea Surface Temperature: http://portal.nersc.gov/project/dasrepo/AGU_ML_Tutorial/sst.mon.mean.trefadj.anom.1880to2018.nc
 
-regridded_era_t2m_anomalies.nc: https://doi.org/10.6084/m9.figshare.13232795.v1
+regridded_era_t2m_anomalies.nc: https://doi.org/10.6084/m9.figshare.13263863.v1
 
 - Download files below into "model" folder from: 
 
@@ -74,17 +74,17 @@ Lead Time 5 model: https://doi.org/10.6084/m9.figshare.13232789.v1
 
 Lead Time 6 model: https://doi.org/10.6084/m9.figshare.13232795.v1
 
-Lead Time 7 model: https://doi.org/10.6084/m9.figshare.13232795.v1
+Lead Time 7 model: https://doi.org/10.6084/m9.figshare.13263845.v1
 
-Lead Time 8 model: https://doi.org/10.6084/m9.figshare.13232795.v1
+Lead Time 8 model: https://doi.org/10.6084/m9.figshare.13263848.v1
 
-Lead Time 9 model: https://doi.org/10.6084/m9.figshare.13232795.v1
+Lead Time 9 model: https://doi.org/10.6084/m9.figshare.13263851.v1
 
-Lead Time 10 model: https://doi.org/10.6084/m9.figshare.13232795.v1
+Lead Time 10 model: https://doi.org/10.6084/m9.figshare.13263854.v1
 
-Lead Time 11 model: https://doi.org/10.6084/m9.figshare.13232795.v1
+Lead Time 11 model: https://doi.org/10.6084/m9.figshare.13263857.v1
 
-Lead Time 12 model: https://doi.org/10.6084/m9.figshare.13232795.v1
+Lead Time 12 model: https://doi.org/10.6084/m9.figshare.13263860.v1
 
 
 d. Back to powershell console, go into EnsoPredictDist folder:

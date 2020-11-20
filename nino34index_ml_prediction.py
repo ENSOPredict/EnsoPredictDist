@@ -27,22 +27,22 @@ def load_enso_indices():
 
     pd.Series : monthly ENSO values starting from 1870-01-01
   """
-  with open('mount/data/nino34.long.anom.data.txt') as f:
-    line = f.readline()
-    enso_vals = []
-    while line:
-        yearly_enso_vals = map(float, line.split()[1:])
-        enso_vals.extend(yearly_enso_vals)
-        line = f.readline()
+  # with open('mount/data/nino34.long.anom.data.txt') as f:
+  #   line = f.readline()
+  #   enso_vals = []
+  #   while line:
+  #       yearly_enso_vals = map(float, line.split()[1:])
+  #       enso_vals.extend(yearly_enso_vals)
+  #       line = f.readline()
 
-  enso_vals = pd.Series(enso_vals)
-  enso_vals.index = pd.date_range('1870-01-01',freq='MS',
-                                  periods=len(enso_vals))
-  enso_vals.index = pd.to_datetime(enso_vals.index)
-  return enso_vals
+  # enso_vals = pd.Series(enso_vals)
+  # enso_vals.index = pd.date_range('1870-01-01',freq='MS',
+  #                                 periods=len(enso_vals))
+  # enso_vals.index = pd.to_datetime(enso_vals.index)
+  # return enso_vals
 
 def assemble_predictors_predictands(start_date, end_date, lead_time,
-                                    dataset, data_format,
+                                    input_data, data_format,
                                     num_input_time_steps=1,
                                     use_pca=False, n_components=32,
                                     lat_slice=None, lon_slice=None):
@@ -74,15 +74,16 @@ def assemble_predictors_predictands(start_date, end_date, lead_time,
       and the predictands (np array the ENSO index at the specified lead time).
 
   """
-  file_name = {'observations' : 'mount/data/sst.mon.mean.trefadj.anom.1880to2018.nc',
-               'observations2': 'mount/data/regridded_era_t2m_anomalies.nc',
-               'CNRM'         : 'mount/data/CNRM_tas_anomalies_regridded.nc',
-               'MPI'          : 'mount/data/MPI_tas_anomalies_regridded.nc'}[dataset]
-  variable_name = {'observations' : 'sst',
-                   'observations2': 't2m',
-                   'CNRM'         : 'tas',
-                   'MPI'          : 'tas'}[dataset]
+  file_name = 'mount/data/{}'.format(input_data)
+              #  'observations2': 'mount/data/regridded_era_t2m_anomalies.nc',
+              #  'CNRM'         : 'mount/data/CNRM_tas_anomalies_regridded.nc',
+              #  'MPI'          : 'mount/data/MPI_tas_anomalies_regridded.nc'}[dataset]
+  # variable_name = {'observations' : 'sst',
+  #                  'observations2': 't2m',
+  #                  'CNRM'         : 'tas',
+  #                  'MPI'          : 'tas'}[dataset]
   ds = xr.open_dataset(file_name)
+  variable_name = list(ds.data_vars)[0]
   sst = ds[variable_name].sel(time=slice(start_date, end_date))
   if lat_slice is not None:
     try:
@@ -130,10 +131,11 @@ def assemble_predictors_predictands(start_date, end_date, lead_time,
                         pd.DateOffset(months=lead_time+num_input_time_steps-1)
   end_date_plus_lead = pd.to_datetime(end_date) + \
                       pd.DateOffset(months=lead_time)
-  if dataset == 'observations':
-    y = load_enso_indices()[slice(start_date_plus_lead,
-                                  end_date_plus_lead)]
-  else: #the data is from a GCM
+  # if dataset == 'observations':
+  #   y = load_enso_indices()[slice(start_date_plus_lead,
+  #                                 end_date_plus_lead)]
+  # else: #the data is from a GCM
+  if True:
     X = X.astype(np.float32)
     #The Nino3.4 Index is composed of three month rolling values
     #Therefore, when calculating the Nino3.4 Index in a GCM
@@ -202,6 +204,39 @@ class CNN(nn.Module):
                                                 extracted from the conv layers
         """
         super(CNN, self).__init__()
+        self.conv1 = nn.Conv2d(num_input_time_steps, 64, 5, padding=2)
+        self.pool = nn.MaxPool2d(2, 2)
+        self.conv2 = nn.Conv2d(64, 64, 5, padding=2)
+        self.conv3 = nn.Conv2d(64, 64, 5, padding=2)
+        self.dropout = nn.Dropout(p=0.5)
+        self.dropout2d = nn.Dropout2d(p=0.5)
+        self.fc1 = nn.Linear(64 * 990, 120)
+        self.fc2 = nn.Linear(120, 84)
+        self.fc3 = nn.Linear(84, 1)
+        self.print_feature_dimension = print_feature_dimension
+    def forward(self, x):
+        x = self.pool(F.relu(self.conv1(x)))
+        x = self.pool(F.relu(self.conv2(x)))
+        x = self.dropout2d(self.pool(F.relu(self.conv3(x))))
+        x = x.view(-1, 64 * 990)
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
+        
+'''
+class CNN(nn.Module):
+    def __init__(self, num_input_time_steps=1, print_feature_dimension=False):
+        """
+        inputs
+        -------
+            num_input_time_steps        (int) : the number of input time
+                                                steps in the predictor
+            print_feature_dimension    (bool) : whether or not to print
+                                                out the dimension of the features
+                                                extracted from the conv layers
+        """
+        super(CNN, self).__init__()
         self.conv1 = nn.Conv2d(num_input_time_steps, 6, 3)
         self.pool = nn.MaxPool2d(2, 2)
         self.conv2 = nn.Conv2d(6, 16, 5)
@@ -226,6 +261,7 @@ class CNN(nn.Module):
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
         return x
+'''
 
 class Print(nn.Module):
     """
@@ -296,18 +332,18 @@ import plotly.graph_objects as go
 # user input check
 lead_time_check = [i for i in range(1,13)]
 year_check = ['2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018']
-input_data_check = ['observations', 'observations2']
+# input_data_check = ['observations', 'observations2']
 
 if lead_range not in lead_time_check:
     print("Please enter an integer number from 1 to 12 for lead time.")
-elif interest_year not in year_check:
-    print("Please enter one year from 2011 to 2018 for your interest year.")  
+# elif interest_year not in year_check:
+#     print("Please enter one year from 2011 to 2018 for your interest year.")  
     
 elif interest_month not in lead_time_check:
     print("Please enter a month from 1 to 12 for your interest month.")
     
-elif input_data not in input_data_check:
-    print("Please enter 'observations' or 'observations2' for input data.")
+# elif input_data not in input_data_check:
+#     print("Please enter 'observations' or 'observations2' for input data.")
 
 else: 
   interest_month = '0'+str(interest_month)
@@ -324,7 +360,11 @@ else:
       day = str(30)
       
   test_end_date = interest_year+'-'+interest_month[-2:]+'-'+day 
-
+  
+  
+  start = '2011-01-01'
+  end = interest_year+'-'+interest_month[-2:]+'-'+'01'
+  make_month = [0,1,2,3,4,5,6,7,8,9,10,11,12,1,2,3,4,5,6,7,8,9,10,11,12]
 
   #Assemble numpy arrays corresponding to predictors and predictands
   train_start_date = '1860-01-01'
@@ -338,7 +378,7 @@ else:
   lead_time_list = [i for i in range(1, lead_range +1)]
 
   """update batch_size"""
-  batch_size = [64,10,10,64,10,10,10,10,10,10,10,10]
+  batch_size = [16,16,16,16,16,16,16,16,16,16,16,16]
 
   # climate_model = 'MPI'
 
@@ -348,16 +388,16 @@ else:
 
   for lead_time in lead_time_list:
 
-    test_predictors0, test_predictands0 = assemble_predictors_predictands(test_start_date[lead_time-1],
-                        test_end_date, lead_time, 'observations', 'spatial', num_input_time_steps=num_input_time_steps)
+    test_predictors, test_predictands = assemble_predictors_predictands(test_start_date[lead_time-1],
+                        test_end_date, lead_time, input_data, 'spatial', num_input_time_steps=num_input_time_steps)
 
-    test_predictors1, test_predictands1 = assemble_predictors_predictands(test_start_date[lead_time-1],
-                        test_end_date, lead_time, 'observations2', 'spatial', num_input_time_steps=num_input_time_steps)
+    # test_predictors1, test_predictands1 = assemble_predictors_predictands(test_start_date[lead_time-1],
+    #                     test_end_date, lead_time, 'observations2', 'spatial', num_input_time_steps=num_input_time_steps)
 
-    if input_data == 'observations':
-      test_predictors, test_predictands = test_predictors0, test_predictands0
-    else:
-      test_predictors, test_predictands = test_predictors1, test_predictands0
+    # if input_data == 'observations':
+    #   test_predictors, test_predictands = test_predictors0, test_predictands0
+    # else:
+    #   test_predictors, test_predictands = test_predictors1, test_predictands0
 
     test_dataset = ENSODataset(test_predictors, test_predictands)
 
@@ -366,7 +406,7 @@ else:
     net = CNN(num_input_time_steps=num_input_time_steps)
 
 
-    experiment_name = "twolayerCNN_MPI_{}_{}_lead_time{}".format(train_start_date, train_end_date, str(lead_time))
+    experiment_name = "twolayerCNN_CNRM_{}_{}_lead_time{}".format(train_start_date, train_end_date, str(lead_time))
     predictions = train_network(net, testloader, experiment_name)
 
 
@@ -375,10 +415,33 @@ else:
 
     # print(test_predictands)
 
-    predictions = pd.Series(predictions, index=test_predictands0.index)
-    predictions = predictions.sort_index()
-    y = test_predictands.sort_index()
+    # making between months
+    date_list = list()
+    for year in range(int(start.split('-')[0]), int(end.split('-')[0])):
+        for month in range(1, 13):
+            make_date = str(year)+'-'+str(month)+'-'+'01'
+            date_list.append(make_date)
+    # making end months
+    index0 = make_month.index(int(end.split('-')[1]))
+    index1 = index0+lead_time
+    if index1 <13:
+        for month in range(1, index1+1):
+            make_date = str(int(end.split('-')[0]))+'-'+str(month)+'-'+'01'
+            date_list.append(make_date)
+    else:
+        for month in range(1, 13):
+            make_date = str(int(end.split('-')[0]))+'-'+str(month)+'-'+'01'
+            date_list.append(make_date)
+        for month in range(1, index1-11):
+            make_date = str(int(end.split('-')[0])+1)+'-'+str(month)+'-'+'01'
+            date_list.append(make_date)   
 
+    # predictions = pd.Series(predictions, index=test_predictands.index)
+    date_list = pd.to_datetime(date_list)
+    # predictions = pd.Series(predictions, index=date_list)
+    # predictions = predictions.sort_index()
+    #y = test_predictands.sort_index()
+    y = pd.Series(test_predictands, index=date_list)
     result = pd.DataFrame(y, columns=["ground_truth"])
     column_name = 'lead time'+str(lead_time)
     result[column_name] = predictions
@@ -401,19 +464,18 @@ else:
     column = 'lead time'+str(i+1)
     df[column] = list(result_dic[keys[i]][column]) +null_list
 
-  for i in range(2, 13):
-    if i < 10:
-      date = '2019-0'+str(i)+'-01'
-    else:
-      date = '2019-'+str(i)+'-01'
-    if date in df.index:
-      df['ground_truth'][date] = None
+  # for i in range(2, 13):
+  #   if i < 10:
+  #     date = '2019-0'+str(i)+'-01'
+  #   else:
+  #     date = '2019-'+str(i)+'-01'
+  #   if date in df.index:
+  #     df['ground_truth'][date] = None
 
   sorted(df.columns[1:])
   # Re-order Columns
   df = df[list(df.columns[:1])+sorted(df.columns[1:])]
   result = df
-
   # 1. output csv file
   # df.to_csv('{}.csv'.format(title))
   df.to_csv('mount/output/{}.csv'.format(title))
@@ -493,7 +555,7 @@ else:
 
   fig.update_yaxes(title_text="nino 3.4 index")
   fig.update_layout(
-    width = 1000, title = title , 
+    width = 950, title = title , 
   )
   fig.update_layout(hovermode="x unified")
 
