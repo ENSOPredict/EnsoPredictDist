@@ -56,11 +56,11 @@ c. Outside of powershell consoles, open file explorer and get into EnsoPredictDi
 
 - Download all files below into "data" folder from: 
 
-Nino 3.4 Index: https://doi.org/10.6084/m9.figshare.13227473.v1
+Nino 3.4 Index: http://portal.nersc.gov/project/dasrepo/AGU_ML_Tutorial/nino34.long.anom.data.txt
 
 Sea Surface Temperature: http://portal.nersc.gov/project/dasrepo/AGU_ML_Tutorial/sst.mon.mean.trefadj.anom.1880to2018.nc
 
-regridded_era_t2m_anomalies.nc: https://doi.org/10.6084/m9.figshare.13263863.v1
+optional regridded_era_t2m_anomalies.nc: preprocessed data from ECMWF agency, ERA5 dataset
 
 - Download files below into "model" folder from: 
 
