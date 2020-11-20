@@ -1,5 +1,7 @@
 # EnsoPredict
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4281691.svg)](https://doi.org/10.5281/zenodo.4281691)
+
 ## Description
 
 El Nino Southern Oscillation is a kind of climate phenomenon, which contains three states: El Nino, La Nina, and Neutral, and it requires certain changes in both the ocean and the atmosphere. El Nino indicates a warming ocean surface, while La Nina indicates a cooling ocean surface. To be specific, A cycle of ENSO is usually as long as 2-7 years, and would cause serious climate damage to some areas.
