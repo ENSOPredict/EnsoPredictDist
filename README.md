@@ -48,7 +48,7 @@ a. Make sure you have docker service installed and running in your local compute
 b. Do git clone github repository by running: 
 
 ```
-git clone https://github.com/ENSOPredict-Team2/EnsoPredictDist.git
+git clone https://github.com/ENSOPredict/EnsoPredictDist.git
 ```
 
 
