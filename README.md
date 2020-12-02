@@ -1,6 +1,6 @@
 # EnsoPredict
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4281691.svg)](https://doi.org/10.5281/zenodo.4281691)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4301060.svg)](https://doi.org/10.5281/zenodo.4301060)
 
 ## Description
 
