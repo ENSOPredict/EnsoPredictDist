@@ -39,7 +39,7 @@ mount = folder to be mounted to docker
 
 ## Run Project using Docker
 
-This instruction below is showing how to run EnsoPredict using docker in local computer. For Windows machine, docker can be executed by having Docker Desktop installed and running. 
+This instruction below is showing how to run EnsoPredict using docker in local computer. For Windows machine, docker can be executed by having Docker Desktop installed and running. A demo video can be found at <a href="https://youtu.be/RPdfDuY-QKA">https://youtu.be/RPdfDuY-QKA</a>
 
 
 a. Make sure you have docker service installed and running in your local computer. For example in this project, Docker Desktop was already running in Windows machine. Open windows PowerShell and start typing below commands.
