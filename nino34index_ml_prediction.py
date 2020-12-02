@@ -346,7 +346,7 @@ elif interest_month not in lead_time_check:
 #     print("Please enter 'observations' or 'observations2' for input data.")
 
 else: 
-  interest_month = '0'+str(interest_month)
+  
 
   if interest_month in [1,3,5,7,8,10,12]:
       day = str(31)
@@ -358,7 +358,7 @@ else:
           day = str(28)
   else:
       day = str(30)
-      
+  interest_month = '0'+str(interest_month)    
   test_end_date = interest_year+'-'+interest_month[-2:]+'-'+day 
   
   
@@ -373,7 +373,7 @@ else:
 
   predict_start_date = '2011-01-01'
   test_start_date = ['2010-11-01', '2010-10-01', '2010-09-01', '2010-08-01', '2010-07-01', '2010-06-01', \
-                    '2010-05-01', '2010-04-01', '2010-03-01', '2010-02-01', '2010-01-01', '2009-12-31']
+                    '2010-05-01', '2010-04-01', '2010-03-01', '2010-02-01', '2010-01-01', '2009-12-01']
 
   lead_time_list = [i for i in range(1, lead_range +1)]
 
